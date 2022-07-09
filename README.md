@@ -1,38 +1,30 @@
-# Codegen
+# codegen-rs
 
 Provides an builder API to assist in generating Rust code.
 
-[![Build Status](https://travis-ci.org/carllerche/codegen.svg?branch=master)](https://travis-ci.org/carllerche/codegen)
+This is a fork of the [original codegen crate][origin].
 
-More information about this crate can be found in the [crate documentation][dox]
-
-[dox]: https://docs.rs/codegen/0.1.3/codegen/
+[origin]: https://github.com/carllerche/codegen
 
 ## Installation
 
-To use `codegen`, first add this to your `Cargo.toml`:
+To use `codegen-rs`, add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-codegen = "0.1.3"
-```
-
-Next, add this to your crate:
-
-```rust
-extern crate codegen;
+codegen_rs = { git = "https://github.com/sayanarijit/codegen-rs" }
 ```
 
 ## Usage
 
-1) Create a `Scope` instance.
-2) Use the builder API to add elements to the scope.
-3) Call `Scope::to_string()` to get the generated code.
+1. Create a `Scope` instance.
+2. Use the builder API to add elements to the scope.
+3. Call `Scope::to_string()` to get the generated code.
 
 For example:
 
 ```rust
-use codegen::Scope;
+use codegen_rs::Scope;
 
 let mut scope = Scope::new();
 
@@ -43,11 +35,6 @@ scope.new_struct("Foo")
 
 println!("{}", scope.to_string());
 ```
-
-## Non-goals
-
-`codegen` will not attempt to perform anything beyond basic formatting. For
-improved formatting, the generated code can be passed to `rustfmt`.
 
 ## License
 

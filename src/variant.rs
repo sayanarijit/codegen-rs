@@ -26,13 +26,13 @@ impl Variant {
     where
         T: Into<Type>,
     {
-        self.fields.named(name, ty);
+        self.fields.field(name, ty);
         self
     }
 
     /// Add a tuple field to the variant.
     pub fn tuple(&mut self, ty: &str) -> &mut Self {
-        self.fields.tuple(ty);
+        self.fields.tuple_field(ty);
         self
     }
 

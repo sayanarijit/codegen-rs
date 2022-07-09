@@ -28,7 +28,7 @@ impl Fields {
         self
     }
 
-    pub fn named<T>(&mut self, name: &str, ty: T) -> &mut Self
+    pub fn field<T>(&mut self, name: &str, ty: T) -> &mut Self
     where
         T: Into<Type>,
     {
@@ -40,7 +40,7 @@ impl Fields {
         })
     }
 
-    pub fn tuple<T>(&mut self, ty: T) -> &mut Self
+    pub fn tuple_field<T>(&mut self, ty: T) -> &mut Self
     where
         T: Into<Type>,
     {

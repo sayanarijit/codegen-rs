@@ -88,24 +88,22 @@ impl Struct {
     ///
     /// A struct can either set named fields with this function or tuple fields
     /// with `tuple_field`, but not both.
-    pub fn field<T>(&mut self, name: &str, ty: T) -> &mut Self
+    pub fn field<T>(&mut self, name: &str, ty: T) -> &mut Fields
     where
         T: Into<Type>,
     {
-        self.fields.named(name, ty);
-        self
+        self.fields.field(name, ty)
     }
 
     /// Add a tuple field to the struct.
     ///
     /// A struct can either set tuple fields with this function or named fields
     /// with `field`, but not both.
-    pub fn tuple_field<T>(&mut self, ty: T) -> &mut Self
+    pub fn tuple_field<T>(&mut self, ty: T) -> &mut Fields
     where
         T: Into<Type>,
     {
-        self.fields.tuple(ty);
-        self
+        self.fields.tuple_field(ty)
     }
 
     /// Formats the struct using the given formatter.
