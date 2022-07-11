@@ -126,16 +126,7 @@ impl Function {
     where
         T: Into<Type>,
     {
-        self.args.push(Field {
-            name: name.to_string(),
-            ty: ty.into(),
-            // While a `Field` is used here, both `documentation`
-            // and `annotation` does not make sense for function arguments.
-            // Simply use empty strings.
-            documentation: Vec::new(),
-            annotation: Vec::new(),
-        });
-
+        self.args.push(Field::new(name, ty));
         self
     }
 

@@ -15,10 +15,10 @@
 //!
 //! let mut scope = Scope::new();
 //!
-//! scope.new_struct("Foo")
-//!     .derive("Debug")
-//!     .field("one", "usize")
-//!     .field("two", "String");
+//! let struct_ = scope.new_struct("Foo").derive("Debug");
+//! struct_.field("one", "usize");
+//! struct_.field("two", "String");
+
 //!
 //! println!("{}", scope.to_string());
 //! ```

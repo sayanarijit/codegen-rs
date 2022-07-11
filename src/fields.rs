@@ -28,33 +28,52 @@ impl Fields {
         self
     }
 
-    pub fn field<T>(&mut self, name: &str, ty: T) -> &mut Self
+    pub fn push_tuple<T>(&mut self, ty: T) -> &mut Self
     where
         T: Into<Type>,
     {
-        self.push_named(Field {
-            name: name.to_string(),
-            ty: ty.into(),
-            documentation: Vec::new(),
-            annotation: Vec::new(),
-        })
-    }
-
-    pub fn tuple_field<T>(&mut self, ty: T) -> &mut Self
-    where
-        T: Into<Type>,
-    {
+        let ty = ty.into();
         match *self {
             Fields::Empty => {
-                *self = Fields::Tuple(vec![ty.into()]);
+                *self = Fields::Tuple(vec![ty]);
             }
-            Fields::Tuple(ref mut fields) => {
-                fields.push(ty.into());
+            Fields::Tuple(ref mut types) => {
+                types.push(ty);
             }
             _ => panic!("field list is tuple"),
         }
 
         self
+    }
+
+    pub fn last_tuple_field_mut(&mut self) -> Option<&mut Type> {
+        match self {
+            Self::Tuple(fields) => fields.last_mut(),
+            _ => panic!("field list is tuple"),
+        }
+    }
+
+    pub fn last_named_field_mut(&mut self) -> Option<&mut Field> {
+        match self {
+            Self::Named(fields) => fields.last_mut(),
+            _ => panic!("field list is tuple"),
+        }
+    }
+
+    pub fn field<T>(&mut self, name: &str, ty: T) -> &mut Field
+    where
+        T: Into<Type>,
+    {
+        self.push_named(Field::new(name, ty));
+        self.last_named_field_mut().unwrap()
+    }
+
+    pub fn tuple_field<T>(&mut self, ty: T) -> &mut Type
+    where
+        T: Into<Type>,
+    {
+        self.push_tuple(ty);
+        self.last_tuple_field_mut().unwrap()
     }
 
     pub fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
@@ -73,6 +92,9 @@ impl Fields {
                             for ann in &f.annotation {
                                 write!(fmt, "{}\n", ann)?;
                             }
+                        }
+                        if let Some(visibility) = &f.visibility {
+                            write!(fmt, "{} ", visibility)?;
                         }
                         write!(fmt, "{}: ", f.name)?;
                         f.ty.fmt(fmt)?;

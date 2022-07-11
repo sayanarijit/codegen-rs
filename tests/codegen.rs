@@ -11,10 +11,9 @@ fn empty_scope() {
 fn single_struct() {
     let mut scope = Scope::new();
 
-    scope
-        .new_struct("Foo")
-        .field("one", "usize")
-        .field("two", "String");
+    let struct_ = scope.new_struct("Foo");
+    struct_.field("one", "usize");
+    struct_.field("two", "String");
 
     let expect = r#"
 struct Foo {
@@ -119,10 +118,10 @@ struct Foo;"#;
 fn two_structs() {
     let mut scope = Scope::new();
 
-    scope
-        .new_struct("Foo")
-        .field("one", "usize")
-        .field("two", "String");
+    let mut struct_ = scope.new_struct("Foo");
+
+    struct_.field("one", "usize");
+    struct_.field("two", "String");
 
     scope.new_struct("Bar").field("hello", "World");
 
@@ -143,12 +142,10 @@ struct Bar {
 fn struct_with_derive() {
     let mut scope = Scope::new();
 
-    scope
-        .new_struct("Foo")
-        .derive("Debug")
-        .derive("Clone")
-        .field("one", "usize")
-        .field("two", "String");
+    let mut struct_ = scope.new_struct("Foo");
+    struct_.derive("Debug").derive("Clone");
+    struct_.field("one", "usize");
+    struct_.field("two", "String");
 
     let expect = r#"
 #[derive(Debug, Clone)]
@@ -164,11 +161,9 @@ struct Foo {
 fn struct_with_repr() {
     let mut scope = Scope::new();
 
-    scope
-        .new_struct("Foo")
-        .repr("C")
-        .field("one", "u8")
-        .field("two", "u8");
+    let struct_ = scope.new_struct("Foo").repr("C");
+    struct_.field("one", "u8");
+    struct_.field("two", "u8");
 
     let expect = r#"
 #[repr(C)]
@@ -184,11 +179,9 @@ struct Foo {
 fn struct_with_allow() {
     let mut scope = Scope::new();
 
-    scope
-        .new_struct("Foo")
-        .allow("dead_code")
-        .field("one", "u8")
-        .field("two", "u8");
+    let mut struct_ = scope.new_struct("Foo").allow("dead_code");
+    struct_.field("one", "u8");
+    struct_.field("two", "u8");
 
     let expect = r#"
 #[allow(dead_code)]
@@ -203,13 +196,9 @@ struct Foo {
 #[test]
 fn struct_with_generics_1() {
     let mut scope = Scope::new();
-
-    scope
-        .new_struct("Foo")
-        .generic("T")
-        .generic("U")
-        .field("one", "T")
-        .field("two", "U");
+    let struct_ = scope.new_struct("Foo").generic("T").generic("U");
+    struct_.field("one", "T");
+    struct_.field("two", "U");
 
     let expect = r#"
 struct Foo<T, U> {
@@ -224,11 +213,9 @@ struct Foo<T, U> {
 fn struct_with_generics_2() {
     let mut scope = Scope::new();
 
-    scope
-        .new_struct("Foo")
-        .generic("T, U")
-        .field("one", "T")
-        .field("two", "U");
+    let struct_ = scope.new_struct("Foo").generic("T, U");
+    struct_.field("one", "T");
+    struct_.field("two", "U");
 
     let expect = r#"
 struct Foo<T, U> {
@@ -243,11 +230,9 @@ struct Foo<T, U> {
 fn struct_with_generics_3() {
     let mut scope = Scope::new();
 
-    scope
-        .new_struct("Foo")
-        .generic("T: Win, U")
-        .field("one", "T")
-        .field("two", "U");
+    let struct_ = scope.new_struct("Foo").generic("T: Win, U");
+    struct_.field("one", "T");
+    struct_.field("two", "U");
 
     let expect = r#"
 struct Foo<T: Win, U> {
@@ -282,13 +267,13 @@ where T: Foo,
 fn struct_where_clause_2() {
     let mut scope = Scope::new();
 
-    scope
+    let struct_ = scope
         .new_struct("Foo")
         .generic("T, U")
         .bound("T", "Foo")
-        .bound("U", "Baz")
-        .field("one", "T")
-        .field("two", "U");
+        .bound("U", "Baz");
+    struct_.field("one", "T");
+    struct_.field("two", "U");
 
     let expect = r#"
 struct Foo<T, U>
@@ -330,15 +315,15 @@ fn struct_in_mod() {
 
     {
         let module = scope.new_module("foo");
-        module
+        let struct_ = module
             .new_struct("Foo")
             .doc("Hello some docs")
             .derive("Debug")
             .generic("T, U")
             .bound("T", "SomeBound")
-            .bound("U", "SomeOtherBound")
-            .field("one", "T")
-            .field("two", "U");
+            .bound("U", "SomeOtherBound");
+        struct_.field("one", "T");
+        struct_.field("two", "U");
     }
 
     let expect = r#"
@@ -421,15 +406,15 @@ enum IpAddrKind {
 #[test]
 fn scoped_imports() {
     let mut scope = Scope::new();
-    scope
+    let struct_ = scope
         .new_module("foo")
         .import("bar", "Bar")
         .import("bar", "baz::Baz")
         .import("bar::quux", "quuux::Quuuux")
-        .new_struct("Foo")
-        .field("bar", "Bar")
-        .field("baz", "baz::Baz")
-        .field("quuuux", "quuux::Quuuux");
+        .new_struct("Foo");
+    struct_.field("bar", "Bar");
+    struct_.field("baz", "baz::Baz");
+    struct_.field("quuuux", "quuux::Quuuux");
 
     let expect = r#"
 mod foo {
@@ -566,12 +551,12 @@ impl Foo for Bar {
 fn struct_with_multiple_allow() {
     let mut scope = Scope::new();
 
-    scope
+    let struct_ = scope
         .new_struct("Foo")
         .allow("dead_code")
-        .allow("clippy::all")
-        .field("one", "u8")
-        .field("two", "u8");
+        .allow("clippy::all");
+    struct_.field("one", "u8");
+    struct_.field("two", "u8");
 
     let expect = r#"
 #[allow(dead_code)]
@@ -601,6 +586,26 @@ fn enum_with_multiple_allow() {
 enum IpAddrKind {
     V4,
     V6,
+}"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}
+
+#[test]
+fn struct_with_member_visibility() {
+    let mut scope = Scope::new();
+
+    let struct_ = scope.new_struct("Foo");
+
+    let bar = Field::new("bar", "usize").vis("pub").to_owned();
+
+    struct_.push_field(bar);
+    struct_.field("baz", "i16").vis("pub(crate)");
+
+    let expect = r#"
+struct Foo {
+    pub bar: usize,
+    pub(crate) baz: i16,
 }"#;
 
     assert_eq!(scope.to_string(), &expect[1..]);
