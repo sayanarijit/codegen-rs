@@ -595,18 +595,21 @@ enum IpAddrKind {
 fn struct_with_member_visibility() {
     let mut scope = Scope::new();
 
-    let struct_ = scope.new_struct("Foo");
+    let struct_named = scope.new_struct("Foo");
+    let bar = Field::new("foo", "usize").vis("pub").to_owned();
 
-    let bar = Field::new("bar", "usize").vis("pub").to_owned();
+    struct_named.push_field(bar);
+    struct_named.field("baz", "i16").vis("pub(crate)");
 
-    struct_.push_field(bar);
-    struct_.field("baz", "i16").vis("pub(crate)");
+    scope.new_struct("Bar").tuple_field("Bar").vis("pub");
 
     let expect = r#"
 struct Foo {
-    pub bar: usize,
+    pub foo: usize,
     pub(crate) baz: i16,
-}"#;
+}
+
+struct Bar(pub Bar);"#;
 
     assert_eq!(scope.to_string(), &expect[1..]);
 }

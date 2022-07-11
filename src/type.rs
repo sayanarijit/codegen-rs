@@ -7,6 +7,7 @@ use crate::formatter::Formatter;
 pub struct Type {
     name: String,
     generics: Vec<Type>,
+    visibility: Option<String>,
 }
 
 impl Type {
@@ -15,6 +16,7 @@ impl Type {
         Type {
             name: name.to_string(),
             generics: vec![],
+            visibility: None,
         }
     }
 
@@ -33,25 +35,18 @@ impl Type {
         self
     }
 
-    /// Rewrite the `Type` with the provided path
-    ///
-    /// TODO: Is this needed?
-    pub fn path(&self, path: &str) -> Type {
-        // TODO: This isn't really correct
-        assert!(!self.name.contains("::"));
-
-        let mut name = path.to_string();
-        name.push_str("::");
-        name.push_str(&self.name);
-
-        Type {
-            name,
-            generics: self.generics.clone(),
-        }
+    /// Change the visibility of the type.
+    pub fn vis(&mut self, visibility: &str) -> &mut Self {
+        self.visibility = Some(visibility.to_string());
+        self
     }
 
     /// Formats the struct using the given formatter.
     pub fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
+        if let Some(vis) = self.visibility.as_ref() {
+            write!(fmt, "{} ", vis)?;
+        };
+
         write!(fmt, "{}", self.name)?;
         Type::fmt_slice(&self.generics, fmt)
     }
@@ -82,10 +77,7 @@ impl<'a> From<&'a str> for Type {
 
 impl From<String> for Type {
     fn from(src: String) -> Self {
-        Type {
-            name: src,
-            generics: vec![],
-        }
+        Self::new(&src)
     }
 }
 
