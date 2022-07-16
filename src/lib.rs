@@ -39,6 +39,7 @@ mod scope;
 mod type_def;
 mod variant;
 
+mod r#const;
 mod r#enum;
 mod r#impl;
 mod r#struct;

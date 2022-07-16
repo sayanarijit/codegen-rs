@@ -9,10 +9,12 @@ use crate::import::Import;
 use crate::item::Item;
 use crate::module::Module;
 
+use crate::r#const::Const;
 use crate::r#enum::Enum;
 use crate::r#impl::Impl;
 use crate::r#struct::Struct;
 use crate::r#trait::Trait;
+use crate::r#type::Type;
 
 /// Defines a scope.
 ///
@@ -83,7 +85,9 @@ impl Scope {
         self.items
             .iter_mut()
             .filter_map(|item| match item {
-                &mut Item::Module(ref mut module) if module.name == *name => Some(module),
+                &mut Item::Module(ref mut module) if module.name == *name => {
+                    Some(module)
+                }
                 _ => None,
             })
             .next()
@@ -128,6 +132,25 @@ impl Scope {
     pub fn push_module(&mut self, item: Module) -> &mut Self {
         assert!(self.get_module(&item.name).is_none());
         self.items.push(Item::Module(item));
+        self
+    }
+
+    /// Push a new const definition, returning a mutable reference to it.
+    pub fn new_const<T>(&mut self, name: &str, ty: T, value: &str) -> &mut Const
+    where
+        T: Into<Type>,
+    {
+        self.push_const(Const::new(name, ty, value));
+
+        match *self.items.last_mut().unwrap() {
+            Item::Const(ref mut v) => v,
+            _ => unreachable!(),
+        }
+    }
+
+    /// Push a const definition
+    pub fn push_const(&mut self, item: Const) -> &mut Self {
+        self.items.push(Item::Const(item));
         self
     }
 
@@ -248,6 +271,7 @@ impl Scope {
 
             match *item {
                 Item::Module(ref v) => v.fmt(fmt)?,
+                Item::Const(ref v) => v.fmt(fmt)?,
                 Item::Struct(ref v) => v.fmt(fmt)?,
                 Item::Function(ref v) => v.fmt(false, fmt)?,
                 Item::Trait(ref v) => v.fmt(fmt)?,

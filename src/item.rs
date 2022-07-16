@@ -1,6 +1,7 @@
 use crate::function::Function;
 use crate::module::Module;
 
+use crate::r#const::Const;
 use crate::r#enum::Enum;
 use crate::r#impl::Impl;
 use crate::r#struct::Struct;
@@ -9,6 +10,7 @@ use crate::r#trait::Trait;
 #[derive(Debug, Clone)]
 pub enum Item {
     Module(Module),
+    Const(Const),
     Struct(Struct),
     Function(Function),
     Trait(Trait),

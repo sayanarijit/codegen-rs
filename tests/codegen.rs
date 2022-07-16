@@ -8,6 +8,19 @@ fn empty_scope() {
 }
 
 #[test]
+fn single_const() {
+    let mut scope = Scope::new();
+
+    let const_ = scope.new_const("FOO", "&'static str", r#""bar""#);
+    const_.vis("pub");
+
+    let expect = r#"
+pub const FOO: &'static str = "bar";"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}
+
+#[test]
 fn single_struct() {
     let mut scope = Scope::new();
 
