@@ -5,10 +5,12 @@ use crate::formatter::Formatter;
 use crate::function::Function;
 use crate::scope::Scope;
 
+use crate::r#const::Const;
 use crate::r#enum::Enum;
 use crate::r#impl::Impl;
 use crate::r#struct::Struct;
 use crate::r#trait::Trait;
+use crate::r#type::Type;
 
 /// Defines a module.
 #[derive(Debug, Clone)]
@@ -110,6 +112,14 @@ impl Module {
     pub fn push_module(&mut self, item: Module) -> &mut Self {
         self.scope.push_module(item);
         self
+    }
+
+    /// Push a new const definition, returning a mutable reference to it.
+    pub fn new_const<T>(&mut self, name: &str, ty: T, value: &str) -> &mut Const
+    where
+        T: Into<Type>,
+    {
+        self.scope.new_const(name, ty, value)
     }
 
     /// Push a new struct definition, returning a mutable reference to it.
